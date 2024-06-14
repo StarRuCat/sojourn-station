@@ -148,7 +148,7 @@
 					"color" = armorlist[i] > 25 ? (armorlist[i] > 50 ? "good" : "average") : "bad",
 					"unit" = "%"
 				))
-	
+
 	stats["Armor Stats"] = armor_stats
 
 	var/list/equipment_stats = list()
@@ -172,7 +172,7 @@
 		temperature_stats += list(list("name" = "Minimum Temperature", "type" = "AnimatedNumber", "value" = min_cold_protection_temperature, "unit" = " deg K"))
 
 	stats["Temperature Stats"] = temperature_stats
-	
+
 	data["stats"] = stats
 
 	return data
@@ -430,7 +430,7 @@ BLIND     // can't see anything
 	if(!mob_wear_hat(user))
 		return ..()
 
-/obj/item/clothing/head/attack_generic(var/mob/user)
+/obj/item/clothing/head/attack_generic(mob/user, damage, attack_message, damagetype = BRUTE, attack_flag = ARMOR_MELEE, sharp = FALSE, edge = FALSE)
 	if(!istype(user) || !mob_wear_hat(user))
 		return ..()
 
@@ -721,7 +721,8 @@ BLIND     // can't see anything
 /obj/item/clothing/under/New()
 	..()
 	item_state_slots[slot_w_uniform_str] = icon_state //TODO: drop or gonna use it?
-	sensor_mode = 3 // All clothing on tracking by default now.
+	if(isOnStationLevel(src))
+		sensor_mode = 3 // Clothing spawning on colony levels is on tracking by default.
 
 /obj/item/clothing/under/examine(mob/user)
 	..(user)
@@ -774,7 +775,7 @@ BLIND     // can't see anything
 					V.show_message("[usr] sets [src.loc]'s sensors to maximum.", 1)
 
 /obj/item/clothing/under/attackby(var/obj/item/I, var/mob/U)
-	if(I.get_tool_type(usr, list(QUALITY_SCREW_DRIVING), src) && ishuman(U) && !is_sharp(I)) // No setting sensors with knives!
+	if(I.get_tool_type(usr, list(QUALITY_SCREW_DRIVING), src) && ishuman(U))
 		set_sensors(U)
 	else
 		return ..()
